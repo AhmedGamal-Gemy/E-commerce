@@ -9,3 +9,9 @@ class ReportType(Enum):
     SALES = "sales"
     INVENTORY = "inventory"
     CUSTOMER = "customer"
+
+class CollectionNames(Enum):
+    USERS = "users"
+    PRODUCTS = "products"
+    REPORTS = "reports"
+    CATEGORIES = "categories"

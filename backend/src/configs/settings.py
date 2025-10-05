@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     PROJECT_IS_DEBUG : bool
     PROJECT_PORT : int
 
+    API_PREFIX : str
+
     DB_HOST : str
     DB_PORT : int
     DB_USER : str

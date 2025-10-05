@@ -1,14 +1,16 @@
-from core.logging import get_logger
+from fastapi import Request
+from core.Base import Base
+from configs.enums import CollectionNames
 
-from configs.settings import get_settings
+class BaseModel(Base):
 
+    def __init__(self, request : Request, collection_name: CollectionNames):
 
-class BaseModel:
-
-    def __init__(self, db_client : object):
-
-        self.logger = get_logger(__name__)
+        super().__init__()
         
-        self.settings = get_settings()
+        if not hasattr(request.app, "db_client"):
+            raise RuntimeError("Database client not initialized in app.")
         
-        self.db_client = db_client
+        self.db_client = request.app.db_client
+        
+        self.collection = self.db_client[collection_name.value]
