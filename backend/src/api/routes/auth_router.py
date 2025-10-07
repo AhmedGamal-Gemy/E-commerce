@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from api.routes.base_router import BaseRouter
 
-from api.routes.schemas.RequestSchemas import LoginRequest, RegisterRequest
-from api.routes.schemas.ResponseSchemas import AuthResponse
+from api.schemas.RequestSchemas import LoginRequest, RegisterRequest
+from api.schemas.ResponseSchemas import AuthResponse
 
 from api.controllers.AuthController import AuthController
 
@@ -12,7 +12,6 @@ class AuthRouter(BaseRouter):
 
     def __init__(self):
 
-        self
         super().__init__()
         self.auth_router = APIRouter(
             prefix = self.settings.API_PREFIX + "/auth",
@@ -33,7 +32,7 @@ class AuthRouter(BaseRouter):
 
 
 
-        @self.auth_router.post("/register", response_model = AuthResponse)
+        @self.auth_router.post("/register", response_model = AuthResponse, response_model_exclude_none=True)
         async def register( 
             body : RegisterRequest,
             request : Request

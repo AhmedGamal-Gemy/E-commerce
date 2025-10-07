@@ -2,6 +2,7 @@ from models.models.BaseModel import BaseModel
 from models.schemas.user import User
 from configs.enums import CollectionNames
 from datetime import datetime, timezone
+from pydantic import EmailStr
 
 from fastapi import Request
 class UserModel(BaseModel):
@@ -12,7 +13,7 @@ class UserModel(BaseModel):
 
         self.logger.info(f"UserModel initialized")
 
-    async def create_user(self, user: User) -> dict:
+    async def create_user(self, user: User) -> User:
 
         user_data = user.model_dump( mode = "json" )
         user_data["user_created_at"] = datetime.now(timezone.utc)
@@ -21,14 +22,12 @@ class UserModel(BaseModel):
 
         if result.inserted_id:
             created_user = await self.collection.find_one({"_id": result.inserted_id})
-            
-            # ✅ Transform Mongo document -> Pydantic-compatible
-            created_user["user_id"] = str(created_user["_id"])
-            created_user.pop("_id", None)
-            
-            created_user.pop("user_password_hash", None)
             return created_user
         else:
             self.logger.error("Failed to insert user.")
             return None
 
+    async def get_user_by_email(self, email : EmailStr):
+
+        resulted_user = self.collection.find_one({"user_email" : email})
+        return User(**resulted_user)

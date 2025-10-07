@@ -9,5 +9,6 @@ class User(BaseModel):
     user_email : EmailStr
     user_password_hash : str
     user_role : UserRole = UserRole.USER
+    
     user_created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

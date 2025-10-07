@@ -17,11 +17,12 @@ class Settings(BaseSettings):
     DB_PASSWORD : str
     DB_NAME : str
 
-    JWT_SECRET : str
-    JWT_EXPIRATION : int
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str = "HS256"
+    
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
 
-    REFRESH_TOKEN_SECRET : str
-    REFRESH_TOKEN_EXPIRES_IN : str
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     LOG_LEVEL : str
     LOG_FILE : str

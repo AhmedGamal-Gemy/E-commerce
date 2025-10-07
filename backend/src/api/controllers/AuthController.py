@@ -1,6 +1,6 @@
 from api.controllers.BaseController import BaseController
-from api.routes.schemas.RequestSchemas import LoginRequest, RegisterRequest
-from api.routes.schemas.ResponseSchemas import AuthResponse
+from api.schemas.RequestSchemas import LoginRequest, RegisterRequest
+from api.schemas.ResponseSchemas import AuthResponse, UserResponse, RegisterResult
 from services.AuthService import AuthService
 from models.schemas.user import User
 from fastapi.requests import Request
@@ -16,7 +16,7 @@ class AuthController(BaseController):
     async def login(self, request : LoginRequest) -> AuthResponse:
         pass
 
-    async def register(self, request : RegisterRequest) -> AuthResponse:
+    async def register(self, request : RegisterRequest) -> RegisterResult:
 
         user_password_hash = bcrypt.hash(request.user_password)
 
@@ -29,12 +29,7 @@ class AuthController(BaseController):
 
         created_user = await self.auth_service.register(user = user)
 
-        # access_token = 
-
-
-        return self.build_response(
-            success=True,
-            message="User registered successfully.",
-            data=created_user,
-            status_code=201
+        return RegisterResult(
+            user = created_user,
+            access_token = "None"
         )

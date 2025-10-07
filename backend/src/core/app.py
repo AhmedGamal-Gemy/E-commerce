@@ -29,7 +29,11 @@ def create_app() -> FastAPI:
         await app.mongo_conn.close()
 
 
-    app = FastAPI( lifespan = lifespan )
+    app = FastAPI( 
+        title = settings.PROJECT_NAME,
+        version = settings.PROJECT_VERSION,
+        lifespan = lifespan
+        )
 
     auth = AuthRouter()
 

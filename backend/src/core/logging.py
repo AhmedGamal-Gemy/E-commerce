@@ -1,6 +1,9 @@
 import logging
 import os
 
+import warnings
+warnings.filterwarnings("ignore", module="passlib")
+
 LOGS_DIR = os.path.join("logs")
 os.makedirs(LOGS_DIR, exist_ok=True)
 
@@ -23,6 +26,8 @@ logging.getLogger("pydot").setLevel(logging.WARNING)
 logging.getLogger("python_multipart").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("pymongo").setLevel(logging.WARNING)
+logging.getLogger("passlib").setLevel(logging.WARNING)
 
 
 def get_logger(name: str):
