@@ -1,35 +1,6 @@
 
 import Link from 'next/link';
-
-async function handleLogin(formData) {
-    'use server';
-    
-    const email = formData.get('email');
-    const password = formData.get('password');
-    
-    const errors = [];
-
-    if (!email || !password) {
-        errors.push('Please enter both email and password.');
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errors.push('Please enter a valid email address');
-    }
-
-    if (errors.length > 0) {
-        return { success: false, errors };
-    }
-
-    try {
-        return { success: true };
-    } catch (error) {
-        return { 
-            success: false, 
-            errors: ['Login failed. Please check your credentials.'] 
-        };
-    }
-}
+import { handleLogin } from '../services/authService';
 
 export default function Login() {
     return (

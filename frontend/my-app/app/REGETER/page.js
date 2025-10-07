@@ -1,44 +1,5 @@
 import Link from 'next/link';
-
-async function handleRegister(formData) {
-    'use server';
-    
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const confirm = formData.get('confirm');
-    
-    const errors = [];
-
-    if (!email || !password || !confirm) {
-        errors.push('All fields are required');
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errors.push('Please enter a valid email address');
-    }
-
-    if (password.length < 6) {
-        errors.push('Password must be at least 6 characters');
-    }
-
-    if (password !== confirm) {
-        errors.push('Passwords do not match');
-    }
-
-    if (errors.length > 0) {
-        return { success: false, errors };
-    }
-
-    try {
-
-        return { success: true };
-    } catch (error) {
-        return { 
-            success: false, 
-            errors: ['Registration failed. Please try again.'] 
-        };
-    }
-}
+import { handleRegister } from '../services/authService';
 
 export default function Register() {
 
