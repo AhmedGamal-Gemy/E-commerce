@@ -28,7 +28,7 @@ class ProductController(BaseController):
 
     ################## ADMIN DASHBOARD ##########################
 
-    async def add_product(self, product_request : InsertProductRequest) -> dict:
+    async def add_product(self, product_request : InsertProductRequest) -> InsertProductResponse:
         
         product = Product(
             product_name = product_request.product_name,
@@ -42,11 +42,13 @@ class ProductController(BaseController):
 
         inserted_product = await self.product_service.add_product(product = product)
 
-        return inserted_product
+        return InsertProductResponse(**inserted_product)
 
 
-    async def update_product(self, product_id):
+    async def update_product(self, product_id : str, new_product : Product):
         pass
+
+        
 
     async def delete_product(self, product_id):
         pass
