@@ -7,6 +7,7 @@ from core.logging import get_logger
 from utils.init_database import init_database
 
 from api.routes.auth_router import AuthRouter
+from api.routes.product_router import ProductRouter
 
 def create_app() -> FastAPI:
 
@@ -36,8 +37,11 @@ def create_app() -> FastAPI:
         )
 
     auth = AuthRouter()
+    product = ProductRouter()
 
     app.include_router( auth.get_auth_router() )
+    app.include_router( product.get_product_router() )
+
 
 
     return app

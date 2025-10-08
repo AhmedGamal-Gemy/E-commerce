@@ -4,3 +4,4 @@ pydantic == 2.11.9
 pydantic[email]
 pymongo == 4.15.2
 passlib == 1.7.4
+python-jose[cryptography] == 3.5.0

@@ -13,8 +13,17 @@ class UserResponse(BaseModel):
 class AuthResponse(BaseModel):
     user: UserResponse
     access_token: str
+    refresh_token: Optional[str] = None
 
 class RegisterResult(NamedTuple):
     user : User
     access_token : Optional[str]
 
+
+class InsertProductResponse(BaseModel):
+    product_id : str
+    product_name : str
+    product_description : str
+    product_price : float
+    product_category_name : str
+    product_stock_quantity : int

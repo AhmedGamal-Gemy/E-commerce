@@ -18,8 +18,6 @@ class AuthRouter(BaseRouter):
             tags=["Authentication"],
         )
 
-
-
         @self.auth_router.post("/login", response_model = AuthResponse)
         async def login(
             body : LoginRequest,
@@ -29,8 +27,6 @@ class AuthRouter(BaseRouter):
             auth_controller = AuthController(request=request)
             response = await auth_controller.login(body)
             return response
-
-
 
         @self.auth_router.post("/register", response_model = AuthResponse, response_model_exclude_none=True)
         async def register( 

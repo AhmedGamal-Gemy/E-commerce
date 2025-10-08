@@ -14,9 +14,16 @@ class AuthController(BaseController):
         self.auth_service = AuthService(request = request)
 
     async def login(self, request : LoginRequest) -> AuthResponse:
-        pass
+        
+        user, access_token, refresh_token = await self.auth_service.login(entered_user= request)
 
-    async def register(self, request : RegisterRequest) -> RegisterResult:
+        return AuthResponse(
+            user = user,
+            access_token = access_token,
+            refresh_token = refresh_token 
+        ) 
+
+    async def register(self, request : RegisterRequest) -> AuthResponse:
 
         user_password_hash = bcrypt.hash(request.user_password)
 
@@ -27,9 +34,10 @@ class AuthController(BaseController):
             user_role = request.user_role
         )
 
-        created_user = await self.auth_service.register(user = user)
+        created_user, access_token, refresh_token = await self.auth_service.register(user = user)
 
-        return RegisterResult(
+        return AuthResponse(
             user = created_user,
-            access_token = "None"
+            access_token = access_token,
+            refresh_token = refresh_token 
         )
