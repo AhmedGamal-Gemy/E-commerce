@@ -13,9 +13,10 @@ async def init_database():
     password = quote_plus(settings.DB_PASSWORD)
     host = settings.DB_HOST
     db_name = settings.DB_NAME
+    db_port = settings.DB_PORT
 
     mongo_uri = (
-        f"mongodb://{username}:{password}@{host}:27017/{db_name}?authSource=admin"
+        f"mongodb://{username}:{password}@{host}:{db_port}/{db_name}?authSource=admin"
     )
 
     # init_indexes()

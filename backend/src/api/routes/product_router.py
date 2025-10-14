@@ -1,8 +1,8 @@
 from fastapi import Request, APIRouter
 from api.controllers.ProductController import ProductController
 from api.routes.base_router import BaseRouter
-from api.schemas.RequestSchemas import InsertProductRequest
-
+from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest
+from models.schemas.product import Product
 
 class ProductRouter(BaseRouter):
     def __init__(self):
@@ -44,15 +44,21 @@ class ProductRouter(BaseRouter):
             controller = ProductController(request)
             return await controller.add_product(body)
 
-        @self.product_router.put("/update_product/{product_id}")
-        async def update_product(product_id: str, request: Request):
+        @self.product_router.put("/update_product")
+        async def update_product(
+            request: Request, 
+            body : UpdateProductRequest
+            ):
             controller = ProductController(request)
-            return await controller.update_product(product_id)
-
-        @self.product_router.delete("/delete_product/{product_id}")
-        async def delete_product(product_id: str, request: Request):
+            return await controller.update_product(body)
+        
+        @self.product_router.delete("/delete_product")
+        async def delete_product(
+            body: DeleteProductRequest, 
+            request: Request
+            ):
             controller = ProductController(request)
-            return await controller.delete_product(product_id)
+            return await controller.delete_product(body)
 
     def get_product_router(self):
         return self.product_router

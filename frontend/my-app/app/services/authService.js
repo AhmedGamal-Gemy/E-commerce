@@ -8,15 +8,43 @@ export async function handleRegister(formData) {
     return handleAuth(formData, 'register');
 }
 
-async function handleAuth(formData, type = 'login') {
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const errors = [];
+async function handleAuth(formData , type = 'login') {
+    // const email = formData.get('email');
+    // const password = formData.get('password');
+    // const errors = [];
+
+    import * as z from "zod"; 
+ 
+    const UserLoginSchema = z.object({ 
+        
+    email: 
+    z.string("This is not string")
+    .email("This is not email format")
+    .min(12, "Must be greater than 12"),
+    
+    password: z.string()
+    
+    });
+
+    try {
+        UserLoginSchema.parse(formData);
+    } catch(error){
+    if(error instanceof z.ZodError){
+        // error.issues;
+        for (let index = 0; index < error.issues.length; index++) {
+            error.push(error.issues[index].message)     
+        }
+    }
+}
+
+
 
     // Common validation for both login and register
     if (!email || !password) {
         errors.push('All fields are required');
     }
+
+
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         errors.push('Please enter a valid email address');

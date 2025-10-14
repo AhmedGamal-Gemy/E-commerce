@@ -1,7 +1,8 @@
 from pydantic import BaseModel, EmailStr
 from configs.enums import UserRole
-from typing import Optional, NamedTuple
+from typing import Optional, NamedTuple, List
 from models.schemas.user import User
+from models.schemas.product import Product
 
 
 class UserResponse(BaseModel):
@@ -27,3 +28,15 @@ class InsertProductResponse(BaseModel):
     product_price : float
     product_category_name : str
     product_stock_quantity : int
+
+class UpdateProductResponse(BaseModel):
+    updated_product : Product
+    did_upsert : bool
+
+class DeleteProductResponse(BaseModel):
+    is_delete_success : bool
+
+
+class GetAllProductsResponse(BaseModel):
+    products: List[Product]
+    total_pages: int

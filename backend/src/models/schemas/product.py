@@ -10,4 +10,4 @@ class Product(BaseModel):
     product_category_name : str
     product_stock_quantity : int
     product_image_path : str
-
+    product_sales: int = 0

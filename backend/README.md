@@ -56,11 +56,20 @@ $ cp .env.example .env
 ### How to run the docker services
 
 ```bash
-$ sudo docker compose up -d
+$ docker compose up -d
+```
+
+> To test the database manually use this command using mongosh 
+```bash
+$ mongosh "mongodb://gemy:123@localhost:27018/?authSource=admin"
 ```
 
 ## Run the server 
+- Open a new terminal
 
+```bash
+$ cd backend/src
+```
 ```bash
 $ uvicorn main:app --reload --port 8001 --host 0.0.0.0
 ```
