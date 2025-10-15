@@ -40,3 +40,8 @@ class DeleteProductResponse(BaseModel):
 class GetAllProductsResponse(BaseModel):
     products: List[Product]
     total_pages: int
+    last_seen_id: Optional[str] = None
+    current_page: int
+
+class GetProductResponse(BaseModel):
+    product: Optional[Product]

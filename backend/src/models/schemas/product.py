@@ -1,8 +1,10 @@
 from pydantic import BaseModel, Field
 from bson import ObjectId
 from datetime import datetime, timezone
+from typing import Optional
 
 class Product(BaseModel):
+    product_id : Optional[str] = None
     product_name : str
     product_description : str
     product_price : float

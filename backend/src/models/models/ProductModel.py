@@ -2,8 +2,11 @@ from configs.enums import CollectionNames
 from models.models.BaseModel import BaseModel
 from fastapi import Request
 from models.schemas.product import Product
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List, Dict, Any
 from datetime import datetime, timezone
+from bson import ObjectId
+from math import ceil
+
 
 class ProductModel(BaseModel):
     def __init__(self, request: Request, collection_name: CollectionNames):
@@ -13,14 +16,110 @@ class ProductModel(BaseModel):
         products_count = await self.collection.count_documents({})
         return products_count
 
+    async def paginate_products(
+        self,
+        match_filter: Dict[str, Any],
+        products_number_in_page: int,
+        last_seen_id: Optional[str] = None
+    ) -> Tuple[List[dict], int, Optional[str], int]:
+        """
+        Generic pagination for products.
+        - match_filter: Base query filter (e.g., {} for all, {"product_category_name": category} for filtered).
+        - Handles cursor-based pagination, totals, current_page.
+        """
 
-    async def get_all_products(self, current_page: int, products_number_in_page :int, last_seen_id: str ):
-        
-        # Check if there's no products
-        if await self.count_all_products() <= 0:
-            return
+        # Compute overall total for consistent total_pages (using base match_filter)
+        total = await self.collection.count_documents(match_filter)
+        total_pages = ceil(total / products_number_in_page) if total else 0
 
-        pass
+        if total == 0:
+            return [], total_pages, None, 1
+
+        # Create a copy for cursor-modified match
+        cursor_match = match_filter.copy()
+        if last_seen_id:
+            try:
+                cursor_oid = ObjectId(last_seen_id)
+            except:
+                return [], 0, "Invalid_id", 0
+            cursor_match["_id"] = {"$gt": cursor_oid}
+
+        # Compute current_page based on items before this cursor (using base match + lte if applicable)
+        if last_seen_id:
+            prev_filter = match_filter.copy()
+            prev_filter["_id"] = {"$lte": cursor_oid}
+            previous_count = await self.collection.count_documents(prev_filter)
+        else:
+            previous_count = 0
+        current_page = (previous_count // products_number_in_page) + 1
+
+        # Define consistent projection
+        project = {
+            "product_id": {"$toString": "$_id"},
+            "product_name": 1,
+            "product_description": 1,
+            "product_price": 1,
+            "product_created_at": 1,
+            "product_category_name": 1,
+            "product_stock_quantity": 1,
+            "product_image_path": 1,
+            "product_sales": 1
+        }
+
+        # Pipeline for data fetch
+        pipeline = [
+            {"$match": cursor_match},
+            {"$sort": {"_id": 1}},
+            {"$limit": products_number_in_page},
+            {"$project": project}
+        ]
+
+        products = []
+        cursor = await self.collection.aggregate(pipeline)
+        async for document in cursor:
+            products.append(document)
+
+        if not products:
+            return [], total_pages, None, current_page
+
+        new_last_seen_id = products[-1]["product_id"]
+
+        return products, total_pages, new_last_seen_id, current_page
+
+    async def get_product_by_id(self, product_id: str) -> Optional[dict]:
+        """
+        Fetch a single product by ID.
+        """
+        try:
+            oid = ObjectId(product_id)
+        except:
+            return None
+
+        project = {  # Same as above, but without toString since we query by OID
+            "product_id": {"$toString": "$_id"},
+            "product_name": 1,
+            "product_description": 1,
+            "product_price": 1,
+            "product_created_at": 1,
+            "product_category_name": 1,
+            "product_stock_quantity": 1,
+            "product_image_path": 1,
+            "product_sales": 1
+        }
+
+        return await self.collection.find_one({"_id": oid}, project)
+
+    async def get_all_products(
+        self,
+        products_number_in_page: int,
+        last_seen_id: Optional[str] = None
+    ) -> Tuple[List[dict], int, Optional[str], int]:
+        return await self.paginate_products(
+            match_filter={},
+            products_number_in_page=products_number_in_page,
+            last_seen_id=last_seen_id
+        )
+
 
     async def get_product_by_name(self, product_name : str):
 
@@ -30,14 +129,6 @@ class ProductModel(BaseModel):
             return resulted_product
         return None
     
-    async def get_product_by_id(self, product_id : str):
-
-        resulted_product = await self.collection.find_one({"_id" : product_id})
-
-        if resulted_product:
-            return resulted_product
-        return None
-
     async def add_product(self, product : Product) -> Optional[Product]:
 
         product_data = product.model_dump( mode = "json" )

@@ -3,7 +3,7 @@ from models.models.ProductModel import ProductModel
 from configs.enums import CollectionNames
 from fastapi import Request, HTTPException, status
 from models.schemas.product import Product
-from typing import Optional, Tuple, Union, List
+from typing import Optional, Tuple, Union, List, Dict
 from bson import ObjectId
 
 class ProductService(BaseService):
@@ -23,20 +23,42 @@ class ProductService(BaseService):
 
     async def get_all_products(
             self, 
-            current_page: int, 
             products_number_in_page: int,
-            last_seen_id : str) -> Tuple[List[Product], int, str]:
+            last_seen_id : str) -> Tuple[List[dict], int, Optional[str], int]:
 
-        paginated_products = await self.model.get_all_products( 
-            current_page = current_page, 
+        paginated_products, total_pages, new_last_seen_id, current_page = await self.model.get_all_products( 
             products_number_in_page = products_number_in_page,
             last_seen_id = last_seen_id
             )
-        
-        return paginated_products, 
-        
 
+        return paginated_products, total_pages, new_last_seen_id, current_page
+        
+    async def get_product_by_id(
+        self,
+        product_id: str
+    )-> Optional[Dict]:
+        
+        product = await self.model.get_product_by_id(product_id=product_id)
 
+        if not product:
+            return HTTPException(
+                status_code = status.HTTP_404_NOT_FOUND,
+                detail = "There's no product with this id"
+
+            )
+        return product
+
+    async def get_products_by_category(
+        self,
+        category: str,
+        products_number_in_page: int,
+        last_seen_id: Optional[str] = None
+    ) -> Tuple[List[dict], int, Optional[str], int]:
+        return await self.model.paginate_products(
+            match_filter={"product_category_name": category},
+            products_number_in_page=products_number_in_page,
+            last_seen_id=last_seen_id
+        )
 
     ####################################### ADMIN DASHBOARD #######################################
 

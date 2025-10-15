@@ -3,8 +3,6 @@ from core.Base import Base
 from configs.enums import CollectionNames
 
 
-
-
 class BaseModel(Base):
 
     def __init__(self, request : Request, collection_name: CollectionNames):

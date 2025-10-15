@@ -61,7 +61,7 @@ $ docker compose up -d
 
 > To test the database manually use this command using mongosh 
 ```bash
-$ mongosh "mongodb://gemy:123@localhost:27018/?authSource=admin"
+$ mongosh "mongodb://gemy:ahmed@localhost:27018/?authSource=admin"
 ```
 
 ## Run the server 

@@ -28,7 +28,15 @@ class UpdateProductRequest(BaseModel):
 class DeleteProductRequest(BaseModel):
     product_id_to_delete : str
 
+
+
 class GetAllProductsRequest(BaseModel):
-    current_page : int
     products_number_in_page : int = 10
-    last_seen_id: str
+    last_seen_id: Optional[str] = None
+
+class GetProductRequest(BaseModel):
+    product_id : str
+
+class GetProductsByCategoryRequest(BaseModel):
+    products_request : GetAllProductsRequest
+    category_name: str

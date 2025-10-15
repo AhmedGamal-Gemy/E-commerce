@@ -1,7 +1,7 @@
 from fastapi import Request, APIRouter
 from api.controllers.ProductController import ProductController
 from api.routes.base_router import BaseRouter
-from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest
+from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest, GetAllProductsRequest, GetProductRequest, GetProductsByCategoryRequest
 from models.schemas.product import Product
 
 class ProductRouter(BaseRouter):
@@ -15,24 +15,27 @@ class ProductRouter(BaseRouter):
         ########################## Public routes ##############################
 
         @self.product_router.get("/all_products")
-        async def get_all_products(request: Request):
+        async def get_all_products(
+            request: Request,
+            body: GetAllProductsRequest
+            ):
             controller = ProductController(request)
-            return await controller.get_all_products()
+            return await controller.get_all_products(body)
 
-        @self.product_router.get("/product_by_id/{product_id}")
-        async def get_product_by_id(product_id: str, request: Request):
+        @self.product_router.get("/product_by_id")
+        async def get_product_by_id(body: GetProductRequest, request: Request):
             controller = ProductController(request)
-            return await controller.get_product_by_id(product_id)
+            return await controller.get_product_by_id(body)
 
         @self.product_router.get("/search")
         async def search_products_by_name(query: str, request: Request):
             controller = ProductController(request)
             return await controller.search_products_by_name(query)
 
-        @self.product_router.get("/category/{category_name}")
-        async def get_products_by_category(category_name: str, request: Request):
+        @self.product_router.get("/category")
+        async def get_products_by_category(body: GetProductsByCategoryRequest, request: Request):
             controller = ProductController(request)
-            return await controller.get_products_by_category(category_name)
+            return await controller.get_products_by_category(body)
 
         ########################## Admin routes ##############################
         

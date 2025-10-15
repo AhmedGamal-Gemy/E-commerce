@@ -1,8 +1,8 @@
 from api.controllers.BaseController import BaseController
 from services.ProductService import ProductService
 from fastapi import Request
-from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest, GetAllProductsRequest
-from api.schemas.ResponseSchemas import InsertProductResponse, UpdateProductResponse, DeleteProductResponse, GetAllProductsResponse
+from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest, GetAllProductsRequest, GetProductRequest, GetProductsByCategoryRequest
+from api.schemas.ResponseSchemas import InsertProductResponse, UpdateProductResponse, DeleteProductResponse, GetAllProductsResponse, GetProductResponse
 from models.schemas.product import Product
 from datetime import datetime, timezone
 
@@ -15,31 +15,60 @@ class ProductController(BaseController):
     ################## NORMAL PAGES ##########################
 
     async def get_all_products(self, body: GetAllProductsRequest) -> GetAllProductsResponse:
-        current_page = GetAllProductsRequest.current_page
-        products_number_in_page = GetAllProductsRequest.products_number_in_page
-        last_seen_id = GetAllProductsRequest.last_seen_id
+        products_number_in_page = body.products_number_in_page
+        last_seen_id = body.last_seen_id
 
-        products, total_pages  = await self.product_service.get_all_products( 
-            current_page = current_page, 
+        paginated_products, total_pages, last_seen_id, current_page  = await self.product_service.get_all_products( 
             products_number_in_page = products_number_in_page,
             last_seen_id = last_seen_id
         )             
 
+        products = [
+            Product(**product)
+            for product in paginated_products
+        ]
+
         return GetAllProductsResponse(
             products = products,
             total_pages = total_pages,
-            last_seen_id = last_seen_id
+            last_seen_id = last_seen_id,
+            current_page = current_page
         )
 
 
-    async def get_product_by_id(self, product_id):
-        pass
+    async def get_product_by_id(self, body: GetProductRequest) -> GetProductResponse:
+        
+        product_id = body.product_id
+        product = await self.product_service.get_product_by_id(product_id = product_id)
+        
+        return GetProductResponse(product = product)
 
     async def search_products_by_name(self, query):
         pass 
 
-    async def get_products_by_category(self, category_name):
-        pass
+    async def get_products_by_category(self, body: GetProductsByCategoryRequest):
+        category_name = body.category_name
+        products_number_in_page = body.products_request.products_number_in_page
+        last_seen_id = body.products_request.last_seen_id
+        
+        products_dicts, total_pages, last_seen_id, current_page = await self.product_service.get_products_by_category(
+            category= category_name,
+            products_number_in_page= products_number_in_page,
+            last_seen_id= last_seen_id
+        )
+        
+        products = [
+            Product(**product)
+            for product in products_dicts
+        ]
+
+        return GetAllProductsResponse(
+            products = products,
+            total_pages = total_pages,
+            current_page = current_page,
+            last_seen_id = last_seen_id
+        )
+
 
     ################## ADMIN DASHBOARD ##########################
 
