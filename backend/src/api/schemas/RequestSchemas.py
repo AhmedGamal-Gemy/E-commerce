@@ -29,7 +29,6 @@ class DeleteProductRequest(BaseModel):
     product_id_to_delete : str
 
 
-
 class GetAllProductsRequest(BaseModel):
     products_number_in_page : int = 10
     last_seen_id: Optional[str] = None
@@ -40,3 +39,9 @@ class GetProductRequest(BaseModel):
 class GetProductsByCategoryRequest(BaseModel):
     products_request : GetAllProductsRequest
     category_name: str
+
+class SearchProductsByNameRequest(BaseModel):
+    query: str
+    products_number_in_page: int
+    last_seen_id: Optional[str] = None
+    

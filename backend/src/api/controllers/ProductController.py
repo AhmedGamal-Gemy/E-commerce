@@ -1,8 +1,8 @@
 from api.controllers.BaseController import BaseController
 from services.ProductService import ProductService
 from fastapi import Request
-from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest, GetAllProductsRequest, GetProductRequest, GetProductsByCategoryRequest
-from api.schemas.ResponseSchemas import InsertProductResponse, UpdateProductResponse, DeleteProductResponse, GetAllProductsResponse, GetProductResponse
+from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest, GetAllProductsRequest, GetProductRequest, GetProductsByCategoryRequest, SearchProductsByNameRequest
+from api.schemas.ResponseSchemas import InsertProductResponse, UpdateProductResponse, DeleteProductResponse, GetAllProductsResponse, GetProductResponse, GetBasicAnalysisResponse
 from models.schemas.product import Product
 from datetime import datetime, timezone
 
@@ -43,10 +43,31 @@ class ProductController(BaseController):
         
         return GetProductResponse(product = product)
 
-    async def search_products_by_name(self, query):
-        pass 
+    async def search_products_by_query(self, body: SearchProductsByNameRequest) -> GetAllProductsResponse:
+        query = body.query
+        products_number_in_page = body.products_number_in_page
+        last_seen_id = body.last_seen_id
 
-    async def get_products_by_category(self, body: GetProductsByCategoryRequest):
+        products_dicts, total_pages, last_seen_id, current_page = await self.product_service.search_products_by_query(
+            query= query,
+            products_number_in_page= products_number_in_page,
+            last_seen_id= last_seen_id
+        )
+        
+        products = [
+            Product(**product)
+            for product in products_dicts
+        ]
+
+        return GetAllProductsResponse(
+            products = products,
+            total_pages = total_pages,
+            current_page = current_page,
+            last_seen_id = last_seen_id
+        )
+
+
+    async def get_products_by_category(self, body: GetProductsByCategoryRequest) -> GetAllProductsResponse:
         category_name = body.category_name
         products_number_in_page = body.products_request.products_number_in_page
         last_seen_id = body.products_request.last_seen_id
@@ -110,4 +131,11 @@ class ProductController(BaseController):
 
         return DeleteProductResponse(
             is_delete_success = is_delete_success
+        )
+    
+
+    async def get_basic_analysis(self):
+        basic_analysis = await self.product_service.get_basic_analysis()
+        return GetBasicAnalysisResponse(
+            **basic_analysis
         )

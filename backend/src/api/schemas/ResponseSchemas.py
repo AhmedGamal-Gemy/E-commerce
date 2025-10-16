@@ -45,3 +45,10 @@ class GetAllProductsResponse(BaseModel):
 
 class GetProductResponse(BaseModel):
     product: Optional[Product]
+
+class GetBasicAnalysisResponse(BaseModel):
+    numOfProductsInTheStock : int
+    numOfSaledProducts : int
+    totalPriceOfAllProductsInTheStock : int 
+    totalPriceOfSaledProducts : int 
+    theMostSaledProduct : Product

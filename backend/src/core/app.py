@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from contextlib import asynccontextmanager
 
@@ -8,6 +9,7 @@ from utils.init_database import init_database
 
 from api.routes.auth_router import AuthRouter
 from api.routes.product_router import ProductRouter
+
 
 def create_app() -> FastAPI:
 
@@ -38,6 +40,16 @@ def create_app() -> FastAPI:
 
     auth = AuthRouter()
     product = ProductRouter()
+
+    # Add CORS middleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # For development - allows all origins
+        allow_credentials=True,
+        allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+        allow_headers=["*"],  # Allows all headers
+    )
+
 
     app.include_router( auth.get_auth_router() )
     app.include_router( product.get_product_router() )

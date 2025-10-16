@@ -27,6 +27,12 @@ $ export PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ "
 ```  
 ## Installation
 
+- Go to src folder 
+
+```bash
+$ cd backend/src
+```
+
 ### Install required packages
 
 ```bash
@@ -42,6 +48,8 @@ cp .env.example .env
 Set your environment variables in the `.env` file. like the api keys
 
 ## Run Docker Compose Services
+
+- firstly open docker
 
 ### Secure the secrets inside docker
 
@@ -71,7 +79,7 @@ $ mongosh "mongodb://gemy:ahmed@localhost:27018/?authSource=admin"
 $ cd backend/src
 ```
 ```bash
-$ uvicorn main:app --reload --port 8001 --host 0.0.0.0
+$ python -m uvicorn main:app --reload --port 8001 --host 0.0.0.0
 ```
 
 - uvicorn is the server and must be installed in the system using the requirements.

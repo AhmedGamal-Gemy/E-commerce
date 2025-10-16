@@ -60,6 +60,22 @@ class ProductService(BaseService):
             last_seen_id=last_seen_id
         )
 
+    async def search_products_by_query(
+            self,
+            query: str, 
+            products_number_in_page: int,
+            last_seen_id: Optional[str] = None
+            ):
+        match_stage = {
+            "product_name": {"$regex": query, "$options": "i"},
+            "_id": {"$gt": ObjectId(last_seen_id)} if last_seen_id else {"$exists": True}
+        }
+        return await self.model.paginate_products(
+            match_filter= match_stage,
+            products_number_in_page=products_number_in_page
+            )
+        
+
     ####################################### ADMIN DASHBOARD #######################################
 
     async def add_product(self, product : Product) -> dict:
@@ -119,3 +135,21 @@ class ProductService(BaseService):
 
         return is_delete_success
         
+    async def get_basic_analysis(self):
+        num_in_stock = await self.model.count_products_in_stock()
+        num_sold = await self.model.count_sold_products()
+        total_stock_value = await self.model.total_stock_value()
+        total_sold_value = await self.model.total_sold_value()
+        most_sold = await self.model.most_sold_product()
+
+        most_sold_product = Product(
+            **most_sold
+        )
+
+        return {
+            "numOfProductsInTheStock": num_in_stock,
+            "numOfSaledProducts": num_sold,
+            "totalPriceOfAllProductsInTheStock": total_stock_value,
+            "totalPriceOfSaledProducts": total_sold_value,
+            "theMostSaledProduct": most_sold_product,
+        }

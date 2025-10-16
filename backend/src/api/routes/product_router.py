@@ -1,7 +1,7 @@
 from fastapi import Request, APIRouter
 from api.controllers.ProductController import ProductController
 from api.routes.base_router import BaseRouter
-from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest, GetAllProductsRequest, GetProductRequest, GetProductsByCategoryRequest
+from api.schemas.RequestSchemas import InsertProductRequest, UpdateProductRequest, DeleteProductRequest, GetAllProductsRequest, GetProductRequest, GetProductsByCategoryRequest, SearchProductsByNameRequest
 from models.schemas.product import Product
 
 class ProductRouter(BaseRouter):
@@ -28,9 +28,9 @@ class ProductRouter(BaseRouter):
             return await controller.get_product_by_id(body)
 
         @self.product_router.get("/search")
-        async def search_products_by_name(query: str, request: Request):
+        async def search_products_by_query(body: SearchProductsByNameRequest, request: Request):
             controller = ProductController(request)
-            return await controller.search_products_by_name(query)
+            return await controller.search_products_by_query(body)
 
         @self.product_router.get("/category")
         async def get_products_by_category(body: GetProductsByCategoryRequest, request: Request):
@@ -62,6 +62,13 @@ class ProductRouter(BaseRouter):
             ):
             controller = ProductController(request)
             return await controller.delete_product(body)
+
+        @self.product_router.get("/basic_analysis")
+        async def basic_analysis(
+            request: Request
+            ):
+            controller = ProductController(request)
+            return await controller.get_basic_analysis()
 
     def get_product_router(self):
         return self.product_router

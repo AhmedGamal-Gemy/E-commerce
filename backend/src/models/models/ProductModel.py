@@ -120,7 +120,6 @@ class ProductModel(BaseModel):
             last_seen_id=last_seen_id
         )
 
-
     async def get_product_by_name(self, product_name : str):
 
         resulted_product = await self.collection.find_one({"product_name" : product_name})
@@ -168,4 +167,66 @@ class ProductModel(BaseModel):
 
         return result.deleted_count > 0
 
+    async def count_products_in_stock(self):
+        pipeline = [
+            {"$group": {"_id": None, "numOfProductsInTheStock": {"$sum": "$product_stock_quantity"}}}
+        ]
+
+        cursor = await self.collection.aggregate(pipeline)
+        result = []
+        async for document in cursor:
+            result.append(document)
+
+        return result[0]["numOfProductsInTheStock"] if result else 0
+    
+    async def count_sold_products(self):
+        pipeline = [
+            {"$group": {"_id": None, "total_sales": {"$sum": "$product_sales"}}}
+        ]
+
+        cursor = await self.collection.aggregate(pipeline)
+        result = []
+        async for document in cursor:
+            result.append(document)
+
+        return result[0]["total_sales"] if result else 0
+    
+
+    async def total_stock_value(self):
+        pipeline = [{"$group": {"_id": None, "total": {"$sum": {
+            "$multiply": ["$product_stock_quantity", "$product_price"]
+        }}}}]
+
+        cursor = await self.collection.aggregate(pipeline)
+        result = []
+        async for document in cursor:
+            result.append(document)
+
+        return result[0]["total"] if result else 0
+
+    async def total_sold_value(self):
+        pipeline = [{"$group": {"_id": None, "total": {"$sum": {
+            "$multiply": ["$product_sales", "$product_price"]
+        }}}}]
+        
+        cursor = await self.collection.aggregate(pipeline)
+        result = []
+        async for document in cursor:
+            result.append(document)
+
+
+        return result[0]["total"] if result else 0
+
+
+    async def most_sold_product(self):
+        doc = await self.collection.find_one(
+            sort=[("product_sales", -1)],
+        )
+        if not doc:
+            return None
+
+        # ✅ Convert ObjectId to string for JSON serialization
+        doc["product_id"] = str(doc["_id"])
+        del doc["_id"]
+        return doc
 
