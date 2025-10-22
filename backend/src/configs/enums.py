@@ -15,3 +15,4 @@ class CollectionNames(Enum):
     PRODUCTS = "products"
     REPORTS = "reports"
     CATEGORIES = "categories"
+    ORDERS = "orders"

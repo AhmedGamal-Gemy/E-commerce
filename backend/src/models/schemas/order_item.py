@@ -3,9 +3,9 @@ from bson import ObjectId
 from datetime import datetime, timezone
 
 class OrderItem(BaseModel):
-    order_item_id : ObjectId
-    order_item_order_id : ObjectId
-    order_item_product_id : ObjectId
+    order_item_id : str
+    order_item_order_id : str
+    order_item_product_id : str
     order_item_quantity : int
     order_item_price : float
 

@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from configs.enums import UserRole
 from typing import Optional
 from models.schemas.product import Product
+from models.schemas.user import User
+# from models.schemas.order import Order
 
 class LoginRequest(BaseModel):
     user_email : str
@@ -45,3 +47,6 @@ class SearchProductsByNameRequest(BaseModel):
     products_number_in_page: int
     last_seen_id: Optional[str] = None
     
+# class CheckoutOrderRequest(BaseModel):
+#     order_details: Order
+#     user_details: User

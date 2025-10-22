@@ -1,14 +1,12 @@
 from pydantic import BaseModel, Field
 from bson import ObjectId
 from datetime import datetime, timezone
-from typing import List
-from src.models.schemas.order_item import OrderItem
+from typing import List, Optional
 
 class Order(BaseModel):
-    order_id : ObjectId
-    order_user_id : ObjectId
-    order_items : List[OrderItem]
+    order_id : str
+    order_items : List[str]
     order_total_amount : float
-    order_status : str
+    order_status : Optional[str]
     order_created_at : datetime = Field( default= datetime.now(timezone.utc) )
 

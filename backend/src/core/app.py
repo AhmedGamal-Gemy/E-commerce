@@ -9,7 +9,7 @@ from utils.init_database import init_database
 
 from api.routes.auth_router import AuthRouter
 from api.routes.product_router import ProductRouter
-
+from api.routes.order_router import OrderRouter
 
 def create_app() -> FastAPI:
 
@@ -40,6 +40,7 @@ def create_app() -> FastAPI:
 
     auth = AuthRouter()
     product = ProductRouter()
+    order = OrderRouter()
 
     # Add CORS middleware
     app.add_middleware(
@@ -53,6 +54,7 @@ def create_app() -> FastAPI:
 
     app.include_router( auth.get_auth_router() )
     app.include_router( product.get_product_router() )
+    app.include_router( order.get_order_router() )
 
 
 
