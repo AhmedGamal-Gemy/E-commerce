@@ -144,7 +144,7 @@ class ProductService(BaseService):
 
         most_sold_product = Product(
             **most_sold
-        )
+        ) if most_sold else None
 
         return {
             "numOfProductsInTheStock": num_in_stock,

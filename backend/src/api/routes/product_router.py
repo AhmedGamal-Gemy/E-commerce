@@ -70,12 +70,7 @@ class ProductRouter(BaseRouter):
             )
             return await controller.get_products_by_category(body)
 
-        # @self.product_router.post("/checkout")
-        # async def checkout(
-        #     body: CheckoutOrderRequest,
-        #     request: Request
-        # ):
-        #     pass
+
 
         ########################## Admin routes ##############################
         

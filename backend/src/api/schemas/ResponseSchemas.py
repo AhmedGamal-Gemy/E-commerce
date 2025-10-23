@@ -3,7 +3,7 @@ from configs.enums import UserRole
 from typing import Optional, NamedTuple, List
 from models.schemas.user import User
 from models.schemas.product import Product
-
+from datetime import datetime
 
 class UserResponse(BaseModel):
     user_id: str
@@ -51,4 +51,17 @@ class GetBasicAnalysisResponse(BaseModel):
     numOfSaledProducts : int
     totalPriceOfAllProductsInTheStock : int 
     totalPriceOfSaledProducts : int 
-    theMostSaledProduct : Product
+    theMostSaledProduct : Optional[Product]
+
+class OrderItemResponse(BaseModel):
+    product_name: str
+    quantity: int
+    price: float
+
+class CheckoutOrderResponse(BaseModel):
+    order_id: str
+    order_items: List[OrderItemResponse]
+    total_amount: float
+    status: str
+    created_at: datetime
+ 
