@@ -53,15 +53,12 @@ class GetBasicAnalysisResponse(BaseModel):
     totalPriceOfSaledProducts : int 
     theMostSaledProduct : Optional[Product]
 
-class OrderItemResponse(BaseModel):
-    product_name: str
-    quantity: int
-    price: float
-
 class CheckoutOrderResponse(BaseModel):
     order_id: str
-    order_items: List[OrderItemResponse]
+    checkout_url: str
     total_amount: float
-    status: str
+    status: str = "pending"
     created_at: datetime
+    failure_reasons : dict
+
  

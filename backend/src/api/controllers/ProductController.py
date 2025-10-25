@@ -35,7 +35,6 @@ class ProductController(BaseController):
             current_page = current_page
         )
 
-
     async def get_product_by_id(self, body: GetProductRequest) -> GetProductResponse:
         
         product_id = body.product_id
@@ -65,7 +64,6 @@ class ProductController(BaseController):
             current_page = current_page,
             last_seen_id = last_seen_id
         )
-
 
     async def get_products_by_category(self, body: GetProductsByCategoryRequest) -> GetAllProductsResponse:
         category_name = body.category_name

@@ -49,9 +49,16 @@ class SearchProductsByNameRequest(BaseModel):
     
 class OrderItemRequest(BaseModel):
     product_id: str
+    product_price: float
     quantity: int
+
+
 
 class CheckoutOrderRequest(BaseModel):
     order_items: List[OrderItemRequest]  # what user wants to buy
     user_email: EmailStr                 # user info needed for checkout
     user_id: Optional[str] = None        # User id if he is logged in
+    user_first_name: Optional[str] = None
+    user_last_name: Optional[str] = None
+    user_address: Optional[str] = None
+    user_phone: Optional[str] = None

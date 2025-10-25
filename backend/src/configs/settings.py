@@ -30,5 +30,10 @@ class Settings(BaseSettings):
 
     API_BASE_URL : str
 
+    PAYMOB_API_KEY: str
+    PAYMOB_SECRET_KEY: str
+    PAYMOB_PUBLIC_KEY: str
+    PAYMOB_INTEGRATION_ID: str
+
 def get_settings() -> Settings:
     return Settings()
